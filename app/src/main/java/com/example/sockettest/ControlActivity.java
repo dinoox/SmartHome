@@ -1,7 +1,5 @@
 package com.example.sockettest;
 
-import android.animation.Animator;
-import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -23,6 +21,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.example.sockettest.device.AbstractDeviceHandler;
 import com.example.sockettest.device.BeepHandler;
 import com.example.sockettest.device.CameraHandler;
 import com.example.sockettest.device.DeviceHandler;
@@ -37,10 +36,7 @@ public class ControlActivity extends AppCompatActivity implements View.OnClickLi
 
     private ApplicationUtil appUtil;
 
-    private ObjectAnimator fanAnimator,ledAnimator,beepAnimator,cameraAnimator;
-
-
-    private DeviceHandler fanHandler,beepHandler,ledHandler,cameraHandler;
+    private AbstractDeviceHandler fanHandler,beepHandler,ledHandler,cameraHandler;
 
 
     private ImageView fanImage,beepImage;
@@ -59,9 +55,9 @@ public class ControlActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_control);
 
-        //初始化组件与动画对象
+        //初始化组件与设备处理器对象
         initComponents();
-        initAnimations();
+        initHandlers();
 
 
         //注册广播
@@ -71,48 +67,25 @@ public class ControlActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    private class MyBroadcast extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            if (smartMode) {
-                beepHandler.amendDeviceOnSmartMode(beepAnimator,intent.getFloatExtra("humidity", 0),smartMode);
-                fanHandler.amendDeviceOnSmartMode(fanAnimator,intent.getFloatExtra("temperature", 0),smartMode);
-                ledHandler.amendDeviceOnSmartMode(ledAnimator,intent.getFloatExtra("ill", 0),smartMode, ledImage);
-            }
-        }
-    }
 
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.fan:
-                fanHandler.getDeviceControlCode()[0] = String.valueOf((Integer.parseInt(fanHandler.getDeviceControlCode()[0]) + 1) % 4);
-                appUtil.sendCommand(fanHandler.getDeviceControlCode()[Integer.parseInt(fanHandler.getDeviceControlCode()[0]) == 0?4:Integer.parseInt(fanHandler.getDeviceControlCode()[0])]);
-
-                fanHandler.renderDeviceAnimation(fanAnimator,Integer.parseInt(fanHandler.getDeviceControlCode()[0]));
+                fanHandler.amendDeviceOnClick();
                 Toast.makeText(ControlActivity.this,fanHandler.getDeviceTip(),Toast.LENGTH_SHORT).show();
                 break;
             case R.id.beep:
-                beepHandler.getDeviceControlCode()[0] = String.valueOf((Integer.parseInt(beepHandler.getDeviceControlCode()[0]) + 1) % 2);
-                appUtil.sendCommand(beepHandler.getDeviceControlCode()[Integer.parseInt(beepHandler.getDeviceControlCode()[0]) == 0?2:Integer.parseInt(beepHandler.getDeviceControlCode()[0])]);
-
-                beepHandler.renderDeviceAnimation(beepAnimator,Integer.parseInt(beepHandler.getDeviceControlCode()[0]));
+                beepHandler.amendDeviceOnClick();
                 Toast.makeText(ControlActivity.this,beepHandler.getDeviceTip(),Toast.LENGTH_SHORT).show();
                 break;
             case R.id.led:
-                ledHandler.getDeviceControlCode()[0] = String.valueOf((Integer.parseInt(ledHandler.getDeviceControlCode()[0]) + 1) % 2);
-                appUtil.sendCommand(ledHandler.getDeviceControlCode()[Integer.parseInt(ledHandler.getDeviceControlCode()[0]) == 0?2:Integer.parseInt(ledHandler.getDeviceControlCode()[0])]);
-
-                ledHandler.renderDeviceAnimation(ledAnimator,Integer.parseInt(ledHandler.getDeviceControlCode()[0]),ledImage);
+                ledHandler.amendDeviceOnClick();
                 Toast.makeText(ControlActivity.this,ledHandler.getDeviceTip(),Toast.LENGTH_SHORT).show();
                 break;
             case R.id.camera:
-                cameraHandler.getDeviceControlCode()[0] = String.valueOf((Integer.parseInt(cameraHandler.getDeviceControlCode()[0]) + 1) % 2);
-                appUtil.sendCommand(cameraHandler.getDeviceControlCode()[Integer.parseInt(cameraHandler.getDeviceControlCode()[0]) == 0?2:Integer.parseInt(cameraHandler.getDeviceControlCode()[0])]);
 
-                cameraHandler.renderDeviceAnimation(cameraAnimator,Integer.parseInt(cameraHandler.getDeviceControlCode()[0]),cameraImage);
                 Toast.makeText(ControlActivity.this,cameraHandler.getDeviceTip(),Toast.LENGTH_SHORT).show();
                 break;
         }
@@ -120,15 +93,21 @@ public class ControlActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
+    /**
+     * 当Switch被点击时的回调接口
+     * @param isChecked 当前状态
+     */
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         smartMode = isChecked;
-        amendButtonState(smartMode);
+        amendButtonState();
     }
 
 
-
-
+    /**
+     * 初始化页面所有需要的视图组件
+     * （设置相应点击事件）
+     */
     public void initComponents() {
         findViewById(R.id.fan).setOnClickListener(this);
         findViewById(R.id.beep).setOnClickListener(this);
@@ -145,34 +124,48 @@ public class ControlActivity extends AppCompatActivity implements View.OnClickLi
         beepImage.setOnClickListener(this);
         cameraImage.setOnClickListener(this);
 
-
         Switch smartSwitch = findViewById(R.id.smartSwitch);
-
-        System.out.println(smartSwitch);
         smartSwitch.setOnCheckedChangeListener(this);
-
-        fanHandler = new FanHandler();
-        beepHandler = new BeepHandler();
-        ledHandler = new LedHandler();
-        cameraHandler = new CameraHandler();
     }
 
-    public void initAnimations() {
-        //init fan animator
-        fanAnimator = ObjectAnimator.ofFloat(fanImage, "rotation", 0f, 359f);
+
+    /**
+     * 初始化所有的设备控制器
+     * LED设备控制器
+     * 风扇设备控制器
+     * 照相机设备控制器
+     * 蜂鸣器设备控制器
+     */
+    public void initHandlers() {
+
+        //init fan handler
+        ObjectAnimator fanAnimator = ObjectAnimator.ofFloat(fanImage, "rotation", 0f, 359f);
         fanAnimator.setInterpolator(new LinearInterpolator());
         fanAnimator.setRepeatCount(ObjectAnimator.INFINITE);
 
-        //init beep animator
-        beepAnimator = ObjectAnimator.ofFloat(beepImage, "translationX", 0,5,-5,0);
+        fanHandler = new FanHandler(fanImage,fanAnimator);
+
+        //init beep handler
+        ObjectAnimator beepAnimator = ObjectAnimator.ofFloat(beepImage, "translationX", 0,5,-5,0);
         beepAnimator.setDuration(100);
         beepAnimator.setRepeatCount(ObjectAnimator.INFINITE);
         beepAnimator.setInterpolator(new LinearInterpolator());
+
+        beepHandler = new BeepHandler(beepImage,beepAnimator);
+
+        //init led handler
+        ledHandler = new LedHandler(ledImage,new ObjectAnimator());
+
+        //init camera handler
+        cameraHandler = new CameraHandler(cameraImage,new ObjectAnimator());
     }
 
 
-
-    public void amendButtonState(boolean smartMode) {
+    /**
+     * 根据当前是否处在智能模式修正按钮状态
+     * （智能模式按钮禁用）
+     */
+    public void amendButtonState() {
         if (smartMode) {
             findViewById(R.id.fan).setEnabled(false);
             findViewById(R.id.beep).setEnabled(false);
@@ -187,9 +180,37 @@ public class ControlActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
+    /**
+     * 页面摧毁时刻注销广播资源
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcast);
     }
+
+
+
+    /**
+     * 广播接受类
+     */
+    private class MyBroadcast extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            /**
+             * 接收到每秒的广播后如果当前是智能模式则：
+             * 以温度为指标，修正风扇的状态
+             * 以湿度为指标，修正蜂鸣器的状态
+             * 以光照为指标，修正LED灯的状态
+             */
+
+            if (smartMode) {
+                beepHandler.amendDeviceOnSmartMode(intent.getFloatExtra("humidity", 0),smartMode);
+                fanHandler.amendDeviceOnSmartMode(intent.getFloatExtra("temperature", 0),smartMode);
+                ledHandler.amendDeviceOnSmartMode(intent.getFloatExtra("ill", 0),smartMode);
+            }
+        }
+    }
+
 }

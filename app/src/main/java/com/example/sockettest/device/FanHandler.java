@@ -9,7 +9,9 @@ public class FanHandler extends AbstractDeviceHandler {
     //  FAN_OFF     FAN_1      FAN_2      FAN_3
     private String[] fanCode = {"1","10000000","10000001","10000010","10000011"};
 
-
+    public FanHandler(View view, ObjectAnimator animator) {
+        super(view, animator);
+    }
 
     @Override
     public String getDeviceTip() {
@@ -21,35 +23,33 @@ public class FanHandler extends AbstractDeviceHandler {
         return fanCode;
     }
 
+
+
     @Override
-    public void amendDeviceOnSmartMode(ObjectAnimator animator,float basis,boolean smartMode) {
-        amendFanOnSmartMode(animator,basis,smartMode);
+    public void amendDeviceOnSmartMode(float basis,boolean smartMode) {
+        amendFanOnSmartMode(basis,smartMode);
     }
 
     @Override
-    public void amendDeviceOnSmartMode(ObjectAnimator animator, float basis, boolean smartMode, View view) {
-
-    }
-
-    @Override
-    public void renderDeviceAnimation(ObjectAnimator animator, int code) {
-        fanAnimation(animator,code);
-    }
-
-    @Override
-    public void renderDeviceAnimation(ObjectAnimator animator, int code, View view) {
-
+    public void amendDeviceOnClick() {
+        fanCode[0] = String.valueOf((Integer.parseInt(fanCode[0]) + 1) % 4);
+        appUtil.sendCommand(fanCode[Integer.parseInt(fanCode[0]) == 0?4:Integer.parseInt(fanCode[0])]);
+        fanAnimation(Integer.parseInt(fanCode[0]));
     }
 
 
-    private void amendFanOnSmartMode(ObjectAnimator animator,float temperature,boolean smartMode) {
+
+
+
+
+    private void amendFanOnSmartMode(float temperature,boolean smartMode) {
 
         //20℃ 且风扇已被打开且处于智能模式 则关闭风扇
         if (temperature < 20 && Integer.parseInt(fanCode[0]) != 1 && smartMode) {
             Log.d("风扇","20℃ 且风扇已被打开且处于智能模式 则关闭风扇");
             fanCode[0] = String.valueOf(1);
             appUtil.sendCommand(fanCode[1]);
-            fanAnimation(animator,1);
+            fanAnimation(1);
         }
         //如果 温度>=20℃ 并且 风扇没有开 且处于智能模式，则打开风扇至1档
         else if (temperature >= 20 && Integer.parseInt(fanCode[0]) == 1 && smartMode) {
@@ -58,7 +58,7 @@ public class FanHandler extends AbstractDeviceHandler {
 
             System.out.println(fanCode[0] + "util_-----: " + appUtil + "beepcode 1 + ‘’‘’‘’‘’‘’‘" + fanCode[2]);
             appUtil.sendCommand(fanCode[2]);
-            fanAnimation(animator,2);
+            fanAnimation(2);
         }
 
         //如果 温度>=25℃  且处于智能模式，则继续增大风扇至2档
@@ -66,7 +66,7 @@ public class FanHandler extends AbstractDeviceHandler {
             Log.d("风扇","如果 温度>=25℃  且处于智能模式，则继续增大风扇至2档");
             fanCode[0] = String.valueOf(3);
             appUtil.sendCommand(fanCode[3]);
-            fanAnimation(animator,3);
+            fanAnimation(3);
         }
 
         //如果 温度>=30℃  且处于智能模式，则继续增大风扇至3档
@@ -74,7 +74,7 @@ public class FanHandler extends AbstractDeviceHandler {
             Log.d("风扇","如果 温度>=30℃  且处于智能模式，则继续增大风扇至3档");
             fanCode[0] = String.valueOf(0);
             appUtil.sendCommand(fanCode[4]);
-            fanAnimation(animator,0);
+            fanAnimation(0);
         }
 
     }
@@ -86,7 +86,8 @@ public class FanHandler extends AbstractDeviceHandler {
 
 
 
-    public void fanAnimation(ObjectAnimator animator,int speed) {
+    public void fanAnimation(int speed) {
+
         if (speed == 1)
             animator.pause();
         if (speed == 2) {

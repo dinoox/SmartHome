@@ -8,8 +8,12 @@ import android.widget.TextView;
 
 public class CameraHandler extends AbstractDeviceHandler {
 
+    //  CAMERA_OFF   CAMERA_ON
     private String[] cameraCode = {"1","10110000","10110001"};
 
+    public CameraHandler(View view, ObjectAnimator animator) {
+        super(view, animator);
+    }
 
 
     public String getCameraTip() {
@@ -34,28 +38,22 @@ public class CameraHandler extends AbstractDeviceHandler {
     }
 
     @Override
-    public void amendDeviceOnSmartMode(ObjectAnimator animator,float basis, boolean smartMode) {
+    public void amendDeviceOnSmartMode(float basis, boolean smartMode) {
 
     }
 
     @Override
-    public void amendDeviceOnSmartMode(ObjectAnimator animator, float basis, boolean smartMode, View view) {
+    public void amendDeviceOnClick() {
+        cameraCode[0] = String.valueOf((Integer.parseInt(cameraCode[0]) + 1) % 2);
+        appUtil.sendCommand(cameraCode[Integer.parseInt(cameraCode[0]) == 0?2:Integer.parseInt(cameraCode[0])]);
 
+        cameraAnimation(Integer.parseInt(cameraCode[0]));
     }
 
-    @Override
-    public void renderDeviceAnimation(ObjectAnimator animator, int code) {
 
-    }
 
-    @Override
-    public void renderDeviceAnimation(ObjectAnimator animator, int code, View view) {
-        cameraAnimationOfView(animator,code,view);
-    }
 
-    public void cameraAnimationOfView(ObjectAnimator animator, int code,View view) {
-
-//        if (this.view == null) this.view = view;
+    public void cameraAnimation(int code) {
 
         if (code == 1) {
 

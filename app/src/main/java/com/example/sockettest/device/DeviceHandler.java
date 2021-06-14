@@ -1,9 +1,6 @@
 package com.example.sockettest.device;
 
 
-import android.animation.ObjectAnimator;
-import android.view.View;
-
 public interface DeviceHandler {
 
     //获取设备当前状态的提示
@@ -14,25 +11,18 @@ public interface DeviceHandler {
 
 
     /**
-     * 在智能模式下每秒根据广播收到的数据修正设备状态  animator已经过初始化
+     * 在智能模式下每秒根据广播收到的数据修正设备状态
      */
-    void amendDeviceOnSmartMode(ObjectAnimator animator, float basis, boolean smartMode);
-
-    /**
-     * 在智能模式下每秒根据广播收到的数据修正设备状态  animator未经过初始化
-     */
-    void amendDeviceOnSmartMode(ObjectAnimator animator, float basis, boolean smartMode, View view);
+    void amendDeviceOnSmartMode(float basis, boolean smartMode);
 
 
     /**
-     *  根据当前的设备状态渲染设备动画  animator已经过初始化
+     * 在设备开关被点击下修正设备状态
+     * 1、根据当前设备状态进行相应的状态转换
+     * 2、向服务器发送相应的控制指令
+     * 3、UI页面设备视图刷新
      */
+    void amendDeviceOnClick();
 
-    void renderDeviceAnimation(ObjectAnimator animator, int code);
 
-
-    /**
-     * 根据当前的设备状态渲染设备动画(带视图)   animator未经过初始化
-     */
-    void renderDeviceAnimation(ObjectAnimator animator, int code, View view);
 }

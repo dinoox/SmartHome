@@ -13,6 +13,17 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+/**
+ * 一个Android程序如果需要和服务器建立socket通信的话，在每个activity中都新建socket与服务器连接是非常不便的
+ * 那么我们就需要在各个activity之间传递socket，这样只需要和服务器建立一次连接就可以了
+ *
+ * Android系统会为每个程序运行时创建一个Application类的对象且仅创建一个
+ * 所以Application可以说是单例 (singleton)模式的一个类.且application对象的生命周期是整个程序中最长的，它的生命周期就等于这个程序的生命周期
+ * 因为它是全局 的单例的，所以在不同的Activity,Service中获得的对象都是同一个对象。所以通过Application来进行一些，数据传递，数据共享等,数据缓存等操作
+ */
+
+
+
 public class ApplicationUtil extends Application {
 
     public static final String HOST = "noox.top";
@@ -22,6 +33,7 @@ public class ApplicationUtil extends Application {
     private InputStream inputStream = null;
     private OutputStream outputStream = null;
 
+    //初始化与服务器建立连接
     public void init() {
             new Thread(() -> {
                 if (socket == null) {
@@ -36,7 +48,7 @@ public class ApplicationUtil extends Application {
             }).start();
     }
 
-
+    //循环接收服务器每秒给定的数据将其渲染至主页并广播
     public void connectServer(MainActivity activity) {
 
         new Thread(() -> {
@@ -64,6 +76,7 @@ public class ApplicationUtil extends Application {
         }).start();
     }
 
+    //对服务器发送指令
     public void sendCommand(String cmd) {
         new Thread(() -> {
             try{

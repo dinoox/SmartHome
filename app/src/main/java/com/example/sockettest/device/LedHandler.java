@@ -12,7 +12,11 @@ public class LedHandler extends AbstractDeviceHandler {
     //  LED_OFF     LED_ON
     private String[] ledCode = {"1","10100000","10100001"};
 
-    private TextView textView;
+
+
+    public LedHandler(View view, ObjectAnimator animator) {
+        super(view, animator);
+    }
 
     @Override
     public String getDeviceTip() {
@@ -25,49 +29,43 @@ public class LedHandler extends AbstractDeviceHandler {
     }
 
     @Override
-    public void amendDeviceOnSmartMode(ObjectAnimator animator,float basis, boolean smartMode) {
-        amendLedOnSmartMode(animator,basis,smartMode);
+    public void amendDeviceOnSmartMode(float basis, boolean smartMode) {
+        amendLedOnSmartMode(basis,smartMode);
     }
 
     @Override
-    public void amendDeviceOnSmartMode(ObjectAnimator animator, float basis, boolean smartMode, View view) {
-        if (this.view == null)
-            this.view = view;
-        amendLedOnSmartMode(animator,basis,smartMode);
+    public void amendDeviceOnClick() {
+        ledCode[0] = String.valueOf((Integer.parseInt(ledCode[0]) + 1) % 2);
+        appUtil.sendCommand(ledCode[Integer.parseInt(ledCode[0]) == 0?2:Integer.parseInt(ledCode[0])]);
 
+        ledAnimation(Integer.parseInt(ledCode[0]));
     }
 
-    private void amendLedOnSmartMode(ObjectAnimator animator,float ill,boolean smartMode) {
+
+    private void amendLedOnSmartMode(float ill,boolean smartMode) {
 
         //光照强度 <= 200 并且电灯没开且处于智能模式，则打开LED灯
         if (ill <= 200 && Integer.parseInt(ledCode[0]) == 1 && smartMode) {
             Log.d("LED","光照强度 <= 200 并且电灯没开且处于智能模式，则打开LED灯");
             ledCode[0] = String.valueOf(0);
             appUtil.sendCommand(ledCode[2]);
-            renderDeviceAnimation(animator,0,this.view);
+            ledAnimation(0);
         }
         //光照强度 > 200 并且电灯开了且处于智能模式，则关闭LED灯
         else if (ill > 200 && Integer.parseInt(ledCode[0]) == 0 && smartMode) {
             Log.d("LED","光照强度 > 200 并且电灯开了且处于智能模式，则关闭LED灯");
             ledCode[0] = String.valueOf(1);
             appUtil.sendCommand(ledCode[1]);
-            renderDeviceAnimation(animator,1,this.view);
+            ledAnimation(1);
         }
 
     }
 
-    @Override
-    public void renderDeviceAnimation(ObjectAnimator animator, int code) {
-    }
 
-    @Override
-    public void renderDeviceAnimation(ObjectAnimator animator, int code, View view) {
-        ledAnimationOfView(animator,code,view);
-    }
 
-    public void ledAnimationOfView(ObjectAnimator animator,int code, View view) {
 
-         if(this.view == null) this.view = view;
+    public void ledAnimation(int code) {
+
 
         if (code == 1) {
             animator = ObjectAnimator.ofInt((TextView)view,"textColor", Color.rgb(29,180,242),Color.GRAY);
