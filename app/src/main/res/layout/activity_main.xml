@@ -316,6 +316,12 @@
             android:background="#03A9F4"
             android:text="控制页面"
             android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/config_server"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Button" />
     </LinearLayout>
 
 </LinearLayout>

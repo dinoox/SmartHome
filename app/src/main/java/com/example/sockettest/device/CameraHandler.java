@@ -46,7 +46,6 @@ public class CameraHandler extends AbstractDeviceHandler {
     public void amendDeviceOnClick() {
         cameraCode[0] = String.valueOf((Integer.parseInt(cameraCode[0]) + 1) % 2);
         appUtil.sendCommand(cameraCode[Integer.parseInt(cameraCode[0]) == 0?2:Integer.parseInt(cameraCode[0])]);
-
         cameraAnimation(Integer.parseInt(cameraCode[0]));
     }
 
@@ -56,7 +55,6 @@ public class CameraHandler extends AbstractDeviceHandler {
     public void cameraAnimation(int code) {
 
         if (code == 1) {
-
             animator = ObjectAnimator.ofInt((TextView)view,"textColor", Color.rgb(29,180,242),Color.GRAY);
             animator.setDuration(1000);
             animator.setEvaluator(new ArgbEvaluator());

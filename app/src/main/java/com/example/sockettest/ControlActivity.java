@@ -50,7 +50,8 @@ public class ControlActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
 
         appUtil = (ApplicationUtil) this.getApplication();
-        appUtil.init();
+
+
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_control);
@@ -71,6 +72,11 @@ public class ControlActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
+        if (ApplicationUtil.HOST == null) {
+            Toast.makeText(ControlActivity.this,"服务器未配置！请配置服务器！",Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         switch (v.getId()) {
             case R.id.fan:
                 fanHandler.amendDeviceOnClick();
@@ -85,7 +91,7 @@ public class ControlActivity extends AppCompatActivity implements View.OnClickLi
                 Toast.makeText(ControlActivity.this,ledHandler.getDeviceTip(),Toast.LENGTH_SHORT).show();
                 break;
             case R.id.camera:
-
+                cameraHandler.amendDeviceOnClick();
                 Toast.makeText(ControlActivity.this,cameraHandler.getDeviceTip(),Toast.LENGTH_SHORT).show();
                 break;
         }

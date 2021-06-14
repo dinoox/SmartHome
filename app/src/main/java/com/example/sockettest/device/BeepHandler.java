@@ -40,16 +40,15 @@ public class BeepHandler extends AbstractDeviceHandler {
     private void amendBeepOnSmartMode(float humidity,boolean smartMode) {
         //如果湿度>=10并且蜂鸣器没有开且处于智能模式，则打开蜂鸣器
         if (humidity >= 10 && Integer.parseInt(beepCode[0]) != 0 && smartMode) {
-            System.out.println("如果湿度>=18并且蜂鸣器没有开且处于智能模式，则打开蜂鸣器");
+            System.out.println("如果湿度>=10并且蜂鸣器没有开且处于智能模式，则打开蜂鸣器");
             beepCode[0] = String.valueOf(0);
-            System.out.println(beepCode[0] + "util_-----: " + appUtil + "beepcode 1 + ‘’‘’‘’‘’‘’‘" + beepCode[1]);
             appUtil.sendCommand(beepCode[2]);
             beepAnimation(0);
         }
 
         //如果湿度<10并且蜂鸣器已经打开了且处于智能模式，则关闭蜂鸣器
         if (humidity < 10 && Integer.parseInt(beepCode[0]) == 0 && smartMode) {
-            System.out.println("如果湿度<18并且蜂鸣器已经打开了且处于智能模式，则关闭蜂鸣器");
+            System.out.println("如果湿度<10并且蜂鸣器已经打开了且处于智能模式，则关闭蜂鸣器");
             beepCode[0] = String.valueOf(1);
             appUtil.sendCommand(beepCode[1]);
             beepAnimation(1);
