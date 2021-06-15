@@ -134,10 +134,7 @@ enum MO_CMD{
 **相机控制**
 
 - CAMERA_ON：10110001
-<<<<<<< HEAD
-=======
 
->>>>>>> e2c926fe33c275cdf5404b7863ba71a6f58a5a69
 - CAMERA_OFF：10110000
 
 
