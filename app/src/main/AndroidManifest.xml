@@ -16,14 +16,11 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".MyActivity" />
         <activity android:name=".ControlActivity" />
-        <activity android:name=".device.BeepHandler" />
-        <activity android:name=".device.AbstractDeviceHandler"/>
     </application>
 
 </manifest>

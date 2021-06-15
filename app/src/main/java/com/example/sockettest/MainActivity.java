@@ -18,11 +18,14 @@ import com.example.sockettest.bean.Category;
 import com.example.sockettest.bean.ConverEnvInfo;
 import com.example.sockettest.bean.IconView;
 import com.example.sockettest.util.ApplicationUtil;
+
+import java.io.IOException;
 import java.lang.reflect.Field;
 
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
 
     private Category category;
 
@@ -35,17 +38,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView temperature, humidity, ill, bet, adc, x, y, z, server_info;
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        appUtil = (ApplicationUtil) this.getApplication();
 
+    @Override
+    @SuppressLint("SetTextI18n")
+    protected void onCreate(Bundle savedInstanceState) {
+
+        System.out.println("onCreate : " + this);
+
+        appUtil = (ApplicationUtil) this.getApplication();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         initComponents();
 
-        if (ApplicationUtil.HOST == null)
-            config_server.performClick();
+        if (ApplicationUtil.HOST != null) {
+            appUtil.ConnectServer(this);
+            server_info.setText(ApplicationUtil.HOST + ":" + ApplicationUtil.PORT);
+            server_flag.setTextColor(Color.GREEN);
+            return;
+        }
+
+        config_server.performClick();
     }
 
 
@@ -184,6 +197,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent.putExtra("x", (float) cei.x.get());
         intent.putExtra("y", (float) cei.y.get());
         intent.putExtra("z", (float) cei.z.get());
+    }
+
+
+    /**
+     * 页面销毁时释放socket，使得广播线程结束工作
+     * 当页面再次被创建时建立新的连接
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            appUtil.socket.close();
+            appUtil.socket = null;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

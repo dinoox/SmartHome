@@ -31,9 +31,9 @@ public class ApplicationUtil extends Application {
     public static String HOST;
     public static int PORT;
 
-    private Socket socket = null;
-    private InputStream inputStream = null;
-    private OutputStream outputStream = null;
+    public Socket socket = null;
+    public InputStream inputStream = null;
+    public OutputStream outputStream = null;
 
     //初始化与服务器建立连接
     public void ConnectServer(MainActivity activity) {
@@ -63,9 +63,11 @@ public class ApplicationUtil extends Application {
 
                         activity.runOnUiThread(() -> activity.renderData(cei));
 
+                        socket.sendUrgentData(0xFF);
                     }
 
             } catch (Exception e) {
+                destroySocket();
                 activity.runOnUiThread(() -> Toast.makeText(ApplicationUtil.this, "网络连接出错", Toast.LENGTH_LONG).show());
             }
         }).start();
@@ -85,6 +87,17 @@ public class ApplicationUtil extends Application {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+
+    public void destroySocket() {
+        try {
+            socket.close();
+            socket = null;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

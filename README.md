@@ -47,7 +47,11 @@
 **|仓库编号2bit|设备编号2bit|保留2bit|设备控制命令码2bit**
 
 ```C
+<<<<<<< HEAD
 enum MO_CMD {
+=======
+enum MO_CMD{
+>>>>>>> e2c926fe33c275cdf5404b7863ba71a6f58a5a69
     FAN_OFF = STORE2|FAN|0x00,
     FAN_1 = STORE2|FAN|0x01,
     FAN_2 = STORE2|FAN|0x02,
@@ -61,7 +65,11 @@ enum MO_CMD {
     LED_OFF = STORE2|LED|0x00,
     LED_ON = STORE2|LED|0x01,
     
+<<<<<<< HEAD
      // my CAMERA
+=======
+        // my CAMERA
+>>>>>>> e2c926fe33c275cdf5404b7863ba71a6f58a5a69
     CAMERA_ON = STORE2|CAMERA|0x01,
     CAMERA_OFF = STORE2|CAMERA|0x00,
 };
@@ -69,8 +77,11 @@ enum MO_CMD {
 
 
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> e2c926fe33c275cdf5404b7863ba71a6f58a5a69
 >房间Code
 
 - 0x80 → 10000000 房间2（只用）
@@ -123,7 +134,35 @@ enum MO_CMD {
 **相机控制**
 
 - CAMERA_ON：10110001
+<<<<<<< HEAD
+=======
+
+>>>>>>> e2c926fe33c275cdf5404b7863ba71a6f58a5a69
 - CAMERA_OFF：10110000
 
 
 
+<<<<<<< HEAD
+=======
+
+
+
+
+【答辩之前的任务】
+1.整合本次实训所有的代码功能到一个app中
+2.在小组的app中应用一些小组内自发的设计
+3.完善课堂代码中一些可改善的点
+4.适当增加一些功能（力所能及！！！）
+5.编译出apk安装包
+（Eclipse可以直接从bin下面取出apk文件，Android Stdio一定要给apk签名！）
+ https://www.jianshu.com/p/e809150fc3f4
+推荐直接上架软件市场：
+https://www.pgyer.com/
+6.制作答辩的PPT（产品介绍、代码解析、项目展示、感谢致辞）
+7.要求至少提交
+  （1）项目源代码
+  （2）编译的apk安装包
+  （3）PPT
+8.端午节后（15日或16日下午进行答辩）
+答辩之前QQ上，每个组把上面要提交的资料打包发给我。
+>>>>>>> e2c926fe33c275cdf5404b7863ba71a6f58a5a69
