@@ -38,8 +38,6 @@ public class ApplicationUtil extends Application {
     //初始化与服务器建立连接
     public void ConnectServer(MainActivity activity) {
 
-
-
         new Thread(() -> {
 
             try {
@@ -52,7 +50,7 @@ public class ApplicationUtil extends Application {
 
                     byte[] bytes = new byte[30];
 
-                    while (true) {
+                    while (!socket.isClosed()) {
 
                         inputStream.read(bytes);
 
@@ -64,14 +62,11 @@ public class ApplicationUtil extends Application {
                         LocalBroadcastManager.getInstance(ApplicationUtil.this).sendBroadcast(intent);
 
                         activity.runOnUiThread(() -> activity.renderData(cei));
+
                     }
 
-
             } catch (Exception e) {
-                e.printStackTrace();
-                activity.runOnUiThread(() -> {
-                    Toast.makeText(ApplicationUtil.this, "网络连接出错", Toast.LENGTH_LONG).show();
-                });
+                activity.runOnUiThread(() -> Toast.makeText(ApplicationUtil.this, "网络连接出错", Toast.LENGTH_LONG).show());
             }
         }).start();
     }

@@ -2,14 +2,16 @@ package com.example.sockettest.device;
 
 import android.animation.ObjectAnimator;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 
 public class BeepHandler extends AbstractDeviceHandler {
 
-    //  BEEP_OFF    BEEP_ON
+    //BEEP_OFF    BEEP_ON
     private String[] beepCode = {"1","10010001","10010000"};
 
-    public BeepHandler(View view, ObjectAnimator animator) {
-        super(view, animator);
+    public BeepHandler(View view) {
+        super(view);
+        initDeviceAnimator();
     }
 
 
@@ -36,28 +38,34 @@ public class BeepHandler extends AbstractDeviceHandler {
         beepAnimation(Integer.parseInt(beepCode[0]));
     }
 
+    @Override
+    public void initDeviceAnimator() {
+        ObjectAnimator beepAnimator = ObjectAnimator.ofFloat(view, "translationX", 0,5,-5,0);
+        beepAnimator.setDuration(100);
+        beepAnimator.setRepeatCount(ObjectAnimator.INFINITE);
+        beepAnimator.setInterpolator(new LinearInterpolator());
+
+        this.animator = beepAnimator;
+    }
+
 
     private void amendBeepOnSmartMode(float humidity,boolean smartMode) {
         //如果湿度>=10并且蜂鸣器没有开且处于智能模式，则打开蜂鸣器
         if (humidity >= 10 && Integer.parseInt(beepCode[0]) != 0 && smartMode) {
-            System.out.println("如果湿度>=10并且蜂鸣器没有开且处于智能模式，则打开蜂鸣器");
             beepCode[0] = String.valueOf(0);
             appUtil.sendCommand(beepCode[2]);
             beepAnimation(0);
+            return;
         }
 
         //如果湿度<10并且蜂鸣器已经打开了且处于智能模式，则关闭蜂鸣器
         if (humidity < 10 && Integer.parseInt(beepCode[0]) == 0 && smartMode) {
-            System.out.println("如果湿度<10并且蜂鸣器已经打开了且处于智能模式，则关闭蜂鸣器");
             beepCode[0] = String.valueOf(1);
             appUtil.sendCommand(beepCode[1]);
             beepAnimation(1);
         }
 
     }
-
-
-
 
 
     public void beepAnimation(int code) {
@@ -67,10 +75,12 @@ public class BeepHandler extends AbstractDeviceHandler {
             return;
         }
 
-        if (!animator.isStarted())
+        if (!animator.isStarted()) {
             animator.start();
-        else
-            animator.resume();
+            return;
+        }
+
+        animator.resume();
     }
 
     public String getBeepTip() {

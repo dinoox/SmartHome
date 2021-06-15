@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:layout_margin="0dp"
     android:layout_weight="9"
-    android:background="#007D97"
+    android:background="@drawable/background_gradient"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
@@ -13,8 +13,60 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
-        android:background="#03A9F4"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            android:orientation="horizontal">
+
+            <com.example.sockettest.bean.IconView
+                android:id="@+id/server_flag"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+
+                android:text="&#xe600;"
+                android:textColor="#F30202" />
+
+            <TextView
+                android:id="@+id/server_info"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="9"
+                android:gravity="center"
+                android:text="未获取服务器配置" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/config_server"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/server" />
+
+        <ImageView
+            android:id="@+id/control_page"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/remote_control" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginRight="5dp"
+        android:layout_weight="4"
+        android:background="#0003A9F4"
         android:baselineAligned="false"
         android:orientation="horizontal">
 
@@ -86,8 +138,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
-        android:background="#03A9F4"
+        android:layout_marginLeft="5sp"
+        android:layout_marginRight="5dp"
+        android:layout_weight="4"
+        android:background="#0003A9F4"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -158,8 +212,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
-        android:background="#03A9F4"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_weight="4"
+        android:background="#0003A9F4"
         android:backgroundTint="#03A9F4"
         android:orientation="horizontal">
 
@@ -231,8 +287,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
-        android:background="#03A9F4"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="120dp"
+        android:layout_weight="4"
+        android:background="#0003A9F4"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -299,29 +358,6 @@
                 android:text="未获取" />
         </LinearLayout>
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="#FFFFFF"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/control_page"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:background="#03A9F4"
-            android:text="控制页面"
-            android:textColor="#FFFFFF" />
-
-        <Button
-            android:id="@+id/config_server"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Button" />
     </LinearLayout>
 
 </LinearLayout>

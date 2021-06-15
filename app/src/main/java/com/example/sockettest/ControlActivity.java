@@ -1,30 +1,21 @@
 package com.example.sockettest;
 
-import android.animation.ObjectAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
-import android.graphics.ColorSpace;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import com.example.sockettest.device.AbstractDeviceHandler;
 import com.example.sockettest.device.BeepHandler;
 import com.example.sockettest.device.CameraHandler;
-import com.example.sockettest.device.DeviceHandler;
 import com.example.sockettest.device.FanHandler;
 import com.example.sockettest.device.LedHandler;
 import com.example.sockettest.util.ApplicationUtil;
@@ -34,38 +25,30 @@ public class ControlActivity extends AppCompatActivity implements View.OnClickLi
 
     private boolean smartMode = false;
 
-    private ApplicationUtil appUtil;
-
-    private AbstractDeviceHandler fanHandler,beepHandler,ledHandler,cameraHandler;
-
-
     private ImageView fanImage,beepImage;
 
     private TextView ledImage,cameraImage;
 
     private MyBroadcast broadcast;
 
+    private AbstractDeviceHandler fanHandler,beepHandler,ledHandler,cameraHandler;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        appUtil = (ApplicationUtil) this.getApplication();
-
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_control);
 
         //初始化组件与设备处理器对象
         initComponents();
-        initHandlers();
+        initDeviceHandlers();
 
 
         //注册广播
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("dataUpdate");
-        LocalBroadcastManager.getInstance(this).registerReceiver(broadcast= new MyBroadcast(), intentFilter);
-
+        LocalBroadcastManager.getInstance(this)
+                .registerReceiver(broadcast= new MyBroadcast(), intentFilter);
     }
 
 
@@ -73,30 +56,28 @@ public class ControlActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         if (ApplicationUtil.HOST == null) {
-            Toast.makeText(ControlActivity.this,"服务器未配置！请配置服务器！",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"服务器未配置！请配置服务器！",Toast.LENGTH_SHORT).show();
             return;
         }
 
         switch (v.getId()) {
             case R.id.fan:
                 fanHandler.amendDeviceOnClick();
-                Toast.makeText(ControlActivity.this,fanHandler.getDeviceTip(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,fanHandler.getDeviceTip(),Toast.LENGTH_SHORT).show();
                 break;
             case R.id.beep:
                 beepHandler.amendDeviceOnClick();
-                Toast.makeText(ControlActivity.this,beepHandler.getDeviceTip(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,beepHandler.getDeviceTip(),Toast.LENGTH_SHORT).show();
                 break;
             case R.id.led:
                 ledHandler.amendDeviceOnClick();
-                Toast.makeText(ControlActivity.this,ledHandler.getDeviceTip(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,ledHandler.getDeviceTip(),Toast.LENGTH_SHORT).show();
                 break;
             case R.id.camera:
                 cameraHandler.amendDeviceOnClick();
-                Toast.makeText(ControlActivity.this,cameraHandler.getDeviceTip(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,cameraHandler.getDeviceTip(),Toast.LENGTH_SHORT).show();
                 break;
         }
-
-
     }
 
     /**
@@ -142,28 +123,18 @@ public class ControlActivity extends AppCompatActivity implements View.OnClickLi
      * 照相机设备控制器
      * 蜂鸣器设备控制器
      */
-    public void initHandlers() {
-
+    public void initDeviceHandlers() {
         //init fan handler
-        ObjectAnimator fanAnimator = ObjectAnimator.ofFloat(fanImage, "rotation", 0f, 359f);
-        fanAnimator.setInterpolator(new LinearInterpolator());
-        fanAnimator.setRepeatCount(ObjectAnimator.INFINITE);
-
-        fanHandler = new FanHandler(fanImage,fanAnimator);
+        fanHandler = new FanHandler(fanImage);
 
         //init beep handler
-        ObjectAnimator beepAnimator = ObjectAnimator.ofFloat(beepImage, "translationX", 0,5,-5,0);
-        beepAnimator.setDuration(100);
-        beepAnimator.setRepeatCount(ObjectAnimator.INFINITE);
-        beepAnimator.setInterpolator(new LinearInterpolator());
-
-        beepHandler = new BeepHandler(beepImage,beepAnimator);
+        beepHandler = new BeepHandler(beepImage);
 
         //init led handler
-        ledHandler = new LedHandler(ledImage,new ObjectAnimator());
+        ledHandler = new LedHandler(ledImage);
 
         //init camera handler
-        cameraHandler = new CameraHandler(cameraImage,new ObjectAnimator());
+        cameraHandler = new CameraHandler(cameraImage);
     }
 
 
@@ -176,13 +147,12 @@ public class ControlActivity extends AppCompatActivity implements View.OnClickLi
             findViewById(R.id.fan).setEnabled(false);
             findViewById(R.id.beep).setEnabled(false);
             findViewById(R.id.led).setEnabled(false);
-//            findViewById(R.id.camera).setEnabled(false);
-        } else {
-            findViewById(R.id.fan).setEnabled(true);
-            findViewById(R.id.beep).setEnabled(true);
-            findViewById(R.id.led).setEnabled(true);
-//            findViewById(R.id.camera).setEnabled(true);
+            return;
         }
+
+        findViewById(R.id.fan).setEnabled(true);
+        findViewById(R.id.beep).setEnabled(true);
+        findViewById(R.id.led).setEnabled(true);
     }
 
 

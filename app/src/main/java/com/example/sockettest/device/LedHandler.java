@@ -3,19 +3,19 @@ package com.example.sockettest.device;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 public class LedHandler extends AbstractDeviceHandler {
 
-    //  LED_OFF     LED_ON
+    //LED_OFF     LED_ON
     private String[] ledCode = {"1","10100000","10100001"};
 
 
 
-    public LedHandler(View view, ObjectAnimator animator) {
-        super(view, animator);
+    public LedHandler(View view) {
+        super(view);
+        initDeviceAnimator();
     }
 
     @Override
@@ -41,27 +41,27 @@ public class LedHandler extends AbstractDeviceHandler {
         ledAnimation(Integer.parseInt(ledCode[0]));
     }
 
+    @Override
+    public void initDeviceAnimator() {
+    }
+
 
     private void amendLedOnSmartMode(float ill,boolean smartMode) {
 
         //光照强度 <= 200 并且电灯没开且处于智能模式，则打开LED灯
         if (ill <= 200 && Integer.parseInt(ledCode[0]) == 1 && smartMode) {
-            Log.d("LED","光照强度 <= 200 并且电灯没开且处于智能模式，则打开LED灯");
             ledCode[0] = String.valueOf(0);
             appUtil.sendCommand(ledCode[2]);
             ledAnimation(0);
+            return;
         }
         //光照强度 > 200 并且电灯开了且处于智能模式，则关闭LED灯
-        else if (ill > 200 && Integer.parseInt(ledCode[0]) == 0 && smartMode) {
-            Log.d("LED","光照强度 > 200 并且电灯开了且处于智能模式，则关闭LED灯");
+        if (ill > 200 && Integer.parseInt(ledCode[0]) == 0 && smartMode) {
             ledCode[0] = String.valueOf(1);
             appUtil.sendCommand(ledCode[1]);
             ledAnimation(1);
         }
-
     }
-
-
 
 
     public void ledAnimation(int code) {

@@ -22,9 +22,8 @@ public abstract class AbstractDeviceHandler implements DeviceHandler {
     protected ObjectAnimator animator;
 
 
-    public AbstractDeviceHandler(View view, ObjectAnimator animator) {
+    public AbstractDeviceHandler(View view) {
         this.view = view;
-        this.animator = animator;
     }
 
     //获取当前应用专属的Application
@@ -57,6 +56,4 @@ public abstract class AbstractDeviceHandler implements DeviceHandler {
 
         return appUtil;
     }
-
-
 }

@@ -25,4 +25,8 @@ public interface DeviceHandler {
     void amendDeviceOnClick();
 
 
+    /**
+     * 设备初始化规定属于本设备的动画效果
+     */
+    void initDeviceAnimator();
 }

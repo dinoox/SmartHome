@@ -59,6 +59,7 @@ public class MyActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcast,intentFilter);
 
         setChartOptions();
+        setTitle(category.name().toLowerCase());
     }
 
     public void setChartOptions() {

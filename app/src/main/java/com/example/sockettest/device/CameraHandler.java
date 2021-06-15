@@ -8,23 +8,12 @@ import android.widget.TextView;
 
 public class CameraHandler extends AbstractDeviceHandler {
 
-    //  CAMERA_OFF   CAMERA_ON
+    //CAMERA_OFF   CAMERA_ON
     private String[] cameraCode = {"1","10110000","10110001"};
 
-    public CameraHandler(View view, ObjectAnimator animator) {
-        super(view, animator);
-    }
-
-
-    public String getCameraTip() {
-        int code = Integer.parseInt(cameraCode[0]);
-        String info = null;
-
-        if (code == 1)
-            info = "照相机已停止！";
-        if (code == 0)
-            info = "照相机已启动！";
-        return info;
+    public CameraHandler(View view) {
+        super(view);
+        initDeviceAnimator();
     }
 
     @Override
@@ -49,7 +38,9 @@ public class CameraHandler extends AbstractDeviceHandler {
         cameraAnimation(Integer.parseInt(cameraCode[0]));
     }
 
-
+    @Override
+    public void initDeviceAnimator() {
+    }
 
 
     public void cameraAnimation(int code) {
@@ -59,6 +50,7 @@ public class CameraHandler extends AbstractDeviceHandler {
             animator.setDuration(1000);
             animator.setEvaluator(new ArgbEvaluator());
             animator.start();
+            return;
         }
 
         if (code == 0) {
@@ -69,4 +61,14 @@ public class CameraHandler extends AbstractDeviceHandler {
         }
     }
 
+    public String getCameraTip() {
+        int code = Integer.parseInt(cameraCode[0]);
+        String info = null;
+
+        if (code == 1)
+            info = "照相机已停止！";
+        if (code == 0)
+            info = "照相机已启动！";
+        return info;
+    }
 }

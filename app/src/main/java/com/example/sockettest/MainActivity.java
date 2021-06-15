@@ -2,43 +2,42 @@ package com.example.sockettest;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.sockettest.bean.Category;
 import com.example.sockettest.bean.ConverEnvInfo;
+import com.example.sockettest.bean.IconView;
 import com.example.sockettest.util.ApplicationUtil;
-
 import java.lang.reflect.Field;
-import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Category category;
 
-    private TextView temperature, humidity, ill, bet, adc, x, y, z;
-
-    private Button config_server;
+    private ImageView config_server;
 
     private ApplicationUtil appUtil;
+
+    private IconView server_flag;
+
+    private TextView temperature, humidity, ill, bet, adc, x, y, z, server_info;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         appUtil = (ApplicationUtil) this.getApplication();
-
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -47,57 +46,59 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (ApplicationUtil.HOST == null)
             config_server.performClick();
-
     }
 
+
+    /**
+     * 无论点击什么按钮都无法让dialog消失，那么怎么实现在点击取消按钮时dialog消失呢？
+     * 这个消失事件受到Dialog父类中的mShowing字段的控制，通过反射获取修改即可
+     */
+    public void changeDialogShowState(DialogInterface dialog,boolean state) {
+        try {
+                Field field = Dialog.class.getDeclaredField("mShowing");
+                field.setAccessible(true);
+                field.set(dialog, state);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     @Override
+    @SuppressLint("SetTextI18n")
     public void onClick(View v) {
 
         if (v.getId() == R.id.config_server) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.acticity_dialog, null);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            View view = LayoutInflater.from(this).inflate(R.layout.acticity_dialog, null);
 
             EditText host = view.findViewById(R.id.host);
             EditText port = view.findViewById(R.id.port);
 
-            host.setText(ApplicationUtil.HOST == null?"": ApplicationUtil.HOST);
+            host.setText(ApplicationUtil.HOST == null ? "" : ApplicationUtil.HOST);
             if (ApplicationUtil.PORT != 0) port.setText(String.valueOf(ApplicationUtil.PORT));
-
 
             builder.setPositiveButton("确定", (dialog, which) -> {
 
                 if (!checkHost(host.getText().toString()) || !checkPort(port.getText().toString())) {
-                    Toast.makeText(MainActivity.this,"IP或者端口号不合法，请修正！",Toast.LENGTH_SHORT).show();
 
-                    try {
-                        Field field = Dialog.class.getDeclaredField("mShowing");
-                        field.setAccessible(true);
-                        field.set(dialog, false);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-
-                } else {
-                    ApplicationUtil.HOST = host.getText().toString();
-                    ApplicationUtil.PORT = Integer.parseInt(port.getText().toString());
-                    appUtil.ConnectServer(MainActivity.this);
+                    changeDialogShowState(dialog,false);
+                    Toast.makeText(this,"IP或者端口号不合法，请修正！",Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
-            });
+                changeDialogShowState(dialog,true);
+                ApplicationUtil.HOST = host.getText().toString();
+                ApplicationUtil.PORT = Integer.parseInt(port.getText().toString());
+                appUtil.ConnectServer(this);
 
-            builder.setNegativeButton("取消", (dialog, which) -> {
-                try {
-                    Field field = Dialog.class.getDeclaredField("mShowing");
-                    field.setAccessible(true);
-                    field.set(dialog, true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
+                server_info.setText(ApplicationUtil.HOST + ":" + ApplicationUtil.PORT);
+                server_flag.setTextColor(Color.GREEN);
 
 
-            builder.setTitle("请配置服务器地址").setView(view).show();
+            }).setNegativeButton("取消", (dialog, which) -> changeDialogShowState(dialog,true))
+              .setTitle("请配置服务器地址").setView(view).show();
 
             return;
         }
@@ -131,13 +132,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         if (!(v.getId() == R.id.control_page)) {
-            Intent intent = new Intent(MainActivity.this, MyActivity.class);
+            Intent intent = new Intent(this, MyActivity.class);
             intent.putExtra("category", category.name().toLowerCase());
             startActivity(intent);
             return;
         }
 
-        Intent intent = new Intent(MainActivity.this, ControlActivity.class);
+        Intent intent = new Intent(this, ControlActivity.class);
         startActivity(intent);
     }
 
@@ -204,9 +205,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         findViewById(R.id.control_page).setOnClickListener(this);
 
-
         config_server = findViewById(R.id.config_server);
         config_server.setOnClickListener(this);
 
+        server_info = findViewById(R.id.server_info);
+        server_flag = findViewById(R.id.server_flag);
     }
 }
