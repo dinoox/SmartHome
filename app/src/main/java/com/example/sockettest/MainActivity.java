@@ -43,8 +43,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @SuppressLint("SetTextI18n")
     protected void onCreate(Bundle savedInstanceState) {
 
-        System.out.println("onCreate : " + this);
-
         appUtil = (ApplicationUtil) this.getApplication();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);

@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "list": "c",
+        "pthread.h": "c",
+        "data_global.h": "c",
+        "serial.h": "c",
+        "stdio.h": "c"
+    }
+}

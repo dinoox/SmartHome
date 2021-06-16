@@ -42,7 +42,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="端口"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:maxLines="1"/>
 
         <EditText
             android:id="@+id/port"

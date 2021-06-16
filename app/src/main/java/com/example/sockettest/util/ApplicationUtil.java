@@ -92,8 +92,10 @@ public class ApplicationUtil extends Application {
 
     public void destroySocket() {
         try {
-            socket.close();
-            socket = null;
+            if (socket != null) {
+                socket.close();
+                socket = null;
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

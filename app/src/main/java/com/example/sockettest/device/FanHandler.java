@@ -25,7 +25,6 @@ public class FanHandler extends AbstractDeviceHandler {
     }
 
 
-
     @Override
     public void amendDeviceOnSmartMode(float basis,boolean smartMode) {
         amendFanOnSmartMode(basis,smartMode);
